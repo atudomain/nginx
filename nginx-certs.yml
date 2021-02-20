@@ -1,0 +1,27 @@
+- name: Generate certs for nginx
+  hosts: localhost
+  tasks:
+    - name: Create certs directory
+      file:
+        path: ./nginx/certs
+        state: directory
+
+    - name: Generate dhparam
+      openssl_dhparam:
+        path: ./nginx/certs/dhparam.pem
+
+    - name: Generate ssl key
+      openssl_privatekey:
+        path: ./nginx/certs/ssl.key
+
+    - name: Generate csr
+      openssl_csr:
+        path: ./nginx/certs/ssl.csr
+        privatekey_path: ./nginx/certs/ssl.key
+
+    - name: Generate certificate
+      openssl_certificate:
+        path: ./nginx/certs/ssl.crt
+        privatekey_path: ./nginx/certs/ssl.key
+        csr_path: ./nginx/certs/ssl.csr
+        provider: selfsigned
